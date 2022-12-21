@@ -1,70 +1,94 @@
-# Getting Started with Create React App
+## Following are the steps:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+First follow the **Tailwind-for-production** steps inside this repo and then follow the following steps:
 
-## Available Scripts
+**Step 1:** Move the **input.css** file inside the **src** folder\
+**Step 2:** Make a new file named **context.js** inside the **src** folder and write the following code in it:\
+```
+import React, { Component } from "react";
 
-In the project directory, you can run:
+const ProductContext = React.createContext();
 
-### `npm start`
+class ProductProvider extends Component {
+  state = {};
+  render() {
+    return (
+      <ProductContext.Provider
+        value={{
+          ...this.state,
+        }}
+      >
+        {this.props.children}
+      </ProductContext.Provider>
+    );
+  }
+}
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+const ProductConsumer = ProductContext.Consumer;
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+export { ProductConsumer, ProductProvider };
+```
+**Step 3:** Your **index.js** file will look like the following:\
+```
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { ProductProvider } from "./context";
 
-### `npm test`
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+root.render(
+  <ProductProvider>
+    <Router>
+      <App />
+    </Router>
+  </ProductProvider>
+);
+reportWebVitals();
+```
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Step 4:** Your **App.js** file will look like the following:\
+```
+import { Fragment } from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/Home/Home";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+function App() {
+  return (
+    <Fragment>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </Fragment>
+  );
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default App;
+```
+**Step 5:** Now as you have made a new file named **Home.js** inside the folder **Home** inside the folder **components**. Write the following code inside the **Home.js** file:\
+```
+import React, { Component } from "react";
+import { ProductConsumer } from "../../context";
+import styles from "../../input.css";
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default class Home extends Component {
+  render() {
+    return (
+      <ProductConsumer>
+        {(value) => {
+          return (
+            <div>
+              <h1 className="bg-black text-yellow-300 cursor-pointer">
+                This is home
+              </h1>
+            </div>
+          );
+        }}
+      </ProductConsumer>
+    );
+  }
+}
+```
